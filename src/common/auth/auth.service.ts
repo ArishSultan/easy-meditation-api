@@ -1,9 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
-import { User, UserSchema } from "../../users/users.schema";
+import { User } from '../../users/users.schema';
 import { UsersService } from '../../users/users.service';
-// import { IUser } from '../../data/interfaces/user.interface';
-// import { UsersService } from '../../modules/administrator/users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +24,12 @@ export class AuthService {
 
   async signIn(user: User): Promise<{ access_token }> {
     return {
-      access_token: await this.jwtService.signAsync({ user: user }),
+      access_token: await this.jwtService.signAsync({
+        username: user.username,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        sub: user._id,
+      }),
     };
   }
 
