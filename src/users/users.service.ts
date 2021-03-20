@@ -121,12 +121,12 @@ export class UsersService {
       },
     });
 
-    const url = 'http://localhost:5000';
+    const url = 'https://mysterious-garden-78033.herokuapp.com/';
     transport.sendMail({
       from: 'arishsultan104@gmail.com',
       to: email,
       subject: 'Forgotten Password',
-      text: `<html><a href="${url}/reset-password/${hash}">Click here</a></html>`,
+      text: `<html lang="en"><a href="${url}/reset-password/${hash}">Click here</a></html>`,
     });
   }
 
