@@ -6,11 +6,13 @@ import { LocalStrategy } from './local.strategy';
 import { UsersModule } from '../../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { CoursesModule } from "../../courses/courses.module";
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    CoursesModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: 'SECRET', /// TODO: Setup secret.

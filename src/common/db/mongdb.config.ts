@@ -19,7 +19,8 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       useUnifiedTopology: true,
       uri:
         'mongodb+srv://arish:123@cluster0.kz2th.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-      // 'mongodb://192.168.1.14:27017/meditation-app__db',
+      // 'mongodb://192.168.10.14:27017/meditation-app__db',
+      // 'mongodb://192.168.10.10:27017/meditation-app__db',
     };
   }
 }

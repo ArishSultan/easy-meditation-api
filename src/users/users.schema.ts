@@ -21,6 +21,9 @@ export class User {
   scope: number[];
 
   @Prop()
+  isTrial: boolean;
+
+  @Prop()
   hasPremiumAccess: boolean;
 }
 

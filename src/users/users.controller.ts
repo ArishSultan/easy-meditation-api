@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { User } from './users.schema';
 import { UsersService } from './users.service';
+import { UserCard } from './user-card.schema';
+import { Transaction } from './transaction.schema';
 
 @Controller('users')
 export class UsersController {
@@ -19,14 +21,34 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('customers')
+  getCustomers() {
+    return this.usersService.findAllCustomers();
+  }
+
   @Get(':id')
   getUser(@Param('id') id: string) {
     return this.usersService.findById(id);
   }
 
+  @Get(':id/last-transaction')
+  getLastTransaction(@Param('id') id: string) {
+    return this.usersService.getLastTransactionOf(id);
+  }
+
+  @Post(':id/card')
+  postUserCard(@Param('id') id: string, @Body() card: UserCard) {
+    return this.usersService.saveCard(id, card);
+  }
+
   @Post()
-  postUser(@Body() user: User): Promise<User> {
+  postUser(@Body() user: User) {
     return this.usersService.createUser(user);
+  }
+
+  @Post('transactions')
+  postTransaction(@Body() transaction: Transaction) {
+    return this.usersService.createTransaction(transaction);
   }
 
   @Patch()
@@ -34,6 +56,21 @@ export class UsersController {
     return {
       result: await this.usersService.updateUser(user),
     };
+  }
+
+  @Post('is-valid-token/:token')
+  async validateToken(@Param('token') token: string) {
+    return { result: await this.usersService.isValidToken(token) };
+  }
+
+  @Post('change-forgotten-password')
+  async changeForgottenPassword(@Body() data: any) {
+    return this.usersService.changeForgottenPassword(data);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() email: { email }) {
+    return this.usersService.manageForgotPasswordRequest(email.email);
   }
 
   @Delete(':id')

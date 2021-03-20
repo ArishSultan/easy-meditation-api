@@ -6,12 +6,21 @@ import { Connection, Model } from 'mongoose';
 import { Readable } from 'stream';
 import { Response } from 'express';
 import * as mp3Duration from 'mp3-duration';
+import {
+  ModuleFavorite,
+  ModuleFavoriteDocument,
+} from './module-favorite.schema';
+import { ModuleListened } from './module-listened.schema';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @InjectModel(MeditationModule.name)
     private model: Model<MeditationModuleDocument>,
+    @InjectModel(ModuleFavorite.name)
+    private listenedModel: Model<ModuleFavoriteDocument>,
+    @InjectModel(ModuleListened.name)
+    private favoritesModel: Model<ModuleFavoriteDocument>,
     @InjectConnection()
     private connection: Connection,
   ) {}
@@ -87,5 +96,47 @@ export class CoursesService {
     bucket.delete(ObjectId.createFromHexString(module.trackId));
 
     return (await this.model.deleteOne({ _id: id }).exec()).deletedCount == 1;
+  }
+
+  async markListened(id: string, userId: string): Promise<ModuleListened> {
+    const module = await this.model.findById(id);
+    if (module) {
+      module.listened++;
+      module.save();
+
+      return new this.listenedModel({ courseId: id, user: userId });
+    }
+  }
+
+  async markFavorite(id: string, userId: string): Promise<ModuleFavorite> {
+    const module = await this.model.findById(id);
+    if (module) {
+      module.favorites++;
+      module.save();
+
+      return new this.favoritesModel({ courseId: id, user: userId });
+    }
+  }
+
+  async unMarkFavorite(id: string, userId: string) {
+    const result = await this.favoritesModel
+      .deleteOne({ courseId: id, user: userId })
+      .exec();
+
+    if (result.ok > 0) {
+      return this.model
+        .updateOne({ _id: id }, { $inc: { favorites: -1 } })
+        .then((data) => {
+          console.log(data);
+        });
+    }
+  }
+
+  async getUserFavorites(userId: string) {
+    return this.favoritesModel.find({ user: userId }).exec();
+  }
+
+  getModuleFavorites(id: string) {
+    return this.favoritesModel.find({ courseId: id }).populate('user').exec();
   }
 }

@@ -2,12 +2,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { User } from '../../users/users.schema';
 import { UsersService } from '../../users/users.service';
+import { CoursesService } from '../../courses/courses.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private coursesService: CoursesService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<User | null> {
@@ -33,7 +35,10 @@ export class AuthService {
     };
   }
 
-  async profile(user: { userId }): Promise<{ user }> {
-    return { user: await this.usersService.findById(user.userId) };
+  async profile(user: { userId }): Promise<any> {
+    return {
+      user: await this.usersService.findById(user.userId),
+      favorites: await this.coursesService.getUserFavorites(user.userId),
+    };
   }
 }
