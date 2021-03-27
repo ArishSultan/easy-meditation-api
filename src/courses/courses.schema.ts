@@ -27,6 +27,9 @@ export class MeditationModule {
   filename: string;
 
   @Prop()
+  description: string;
+
+  @Prop()
   trackId: string;
 }
 

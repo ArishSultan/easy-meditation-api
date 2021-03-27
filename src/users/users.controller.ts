@@ -68,6 +68,12 @@ export class UsersController {
     return this.usersService.changeForgottenPassword(data);
   }
 
+  @Post('add-recommended')
+  addRecommended(@Body() data: { module: string }) {}
+
+  @Post('remove-recommended')
+  removeRecommended(@Body() data: { module: string }) {}
+
   @Post('forgot-password')
   forgotPassword(@Body() email: { email }) {
     return this.usersService.manageForgotPasswordRequest(email.email);

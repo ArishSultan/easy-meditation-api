@@ -139,4 +139,11 @@ export class CoursesService {
   getModuleFavorites(id: string) {
     return this.favoritesModel.find({ courseId: id }).populate('user').exec();
   }
+
+  updateModule(module: MeditationModule) {
+    console.log(module);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return this.model.findByIdAndUpdate(module._id, module).exec();
+  }
 }

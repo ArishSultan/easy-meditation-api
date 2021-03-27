@@ -58,9 +58,9 @@ export class UsersService {
   async findById(userId: string): Promise<any> {
     const card = this.userCardModel.findOne({ user: userId }).exec();
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      ...// eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      ...(await this.userModel.findOne({ _id: userId }).exec())._doc,
+      (await this.userModel.findOne({ _id: userId }).populate('modules').exec())._doc,
       card,
     };
   }

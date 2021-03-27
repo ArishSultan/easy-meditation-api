@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Res,
   UploadedFile,
@@ -39,6 +40,11 @@ export class CoursesController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<MeditationModule> {
     return this.service.createModule(module, file.buffer);
+  }
+
+  @Patch('modules')
+  patchModule(@Body() module: MeditationModule): Promise<MeditationModule> {
+    return this.service.updateModule(module);
   }
 
   @Post('modules/:id/mark-fav')

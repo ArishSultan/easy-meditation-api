@@ -39,6 +39,7 @@ export class AuthService {
     return {
       user: await this.usersService.findById(user.userId),
       favorites: await this.coursesService.getUserFavorites(user.userId),
+      recommended: [],
     };
   }
 }

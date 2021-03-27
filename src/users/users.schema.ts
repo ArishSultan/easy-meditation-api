@@ -1,5 +1,6 @@
 import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { MeditationModule } from "../courses/courses.schema";
 
 export type UserDocument = User & Document;
 
@@ -25,6 +26,9 @@ export class User {
 
   @Prop()
   hasPremiumAccess: boolean;
+
+  @Prop({ ref: MeditationModule.name })
+  modules: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
