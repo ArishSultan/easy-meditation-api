@@ -69,10 +69,14 @@ export class UsersController {
   }
 
   @Post('add-recommended')
-  addRecommended(@Body() data: { module: string }) {}
+  addRecommended(@Body() data: { userId: string; module: string }) {
+    return this.usersService.addRecommended(data.userId, data.module);
+  }
 
   @Post('remove-recommended')
-  removeRecommended(@Body() data: { module: string }) {}
+  removeRecommended(@Body() data: { userId: string; module: string }) {
+    return this.usersService.removeRecommended(data.userId, data.module);
+  }
 
   @Post('forgot-password')
   forgotPassword(@Body() email: { email }) {

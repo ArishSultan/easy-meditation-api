@@ -142,4 +142,20 @@ export class UsersService {
 
     return user.save();
   }
+
+  async addRecommended(id: string, module: string) {
+    const user = await this.userModel.findById(id).exec();
+    user.modules.push(module);
+    await user.save();
+
+    return user;
+  }
+
+  async removeRecommended(id: string, module: string) {
+    const user = await this.userModel.findById(id).exec();
+    user.modules.splice(user.modules.indexOf(module), 1);
+    await user.save();
+
+    return user;
+  }
 }
