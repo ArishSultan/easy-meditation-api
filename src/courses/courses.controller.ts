@@ -43,8 +43,12 @@ export class CoursesController {
   }
 
   @Patch('modules')
-  patchModule(@Body() module: MeditationModule): Promise<MeditationModule> {
-    return this.service.updateModule(module);
+  @UseInterceptors(FileInterceptor('file'))
+  patchModule(
+    @Body() module: MeditationModule,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<MeditationModule> {
+    return this.service.updateModule(module, file?.buffer);
   }
 
   @Post('modules/:id/mark-fav')

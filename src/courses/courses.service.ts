@@ -140,10 +140,43 @@ export class CoursesService {
     return this.favoritesModel.find({ courseId: id }).populate('user').exec();
   }
 
-  updateModule(module: MeditationModule) {
-    console.log(module);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return this.model.findByIdAndUpdate(module._id, module).exec();
+  updateModule(
+    module: MeditationModule,
+    file: Buffer,
+  ): Promise<MeditationModule> {
+    if (file) {
+      const bucket = new GridFSBucket(this.connection.db, {
+        bucketName: 'tracks',
+      });
+
+      bucket.delete(ObjectId.createFromHexString(module.trackId));
+      const uploaderStream = new Readable();
+      uploaderStream.push(file);
+      uploaderStream.push(null);
+
+      const stream = bucket.openUploadStream(Date.now().toString());
+      uploaderStream.pipe(stream);
+
+      return new Promise((resolve, reject) => {
+        stream.on('error', reject);
+        stream.on('finish', () => {
+          mp3Duration(file, (err, duration) => {
+            if (err) reject(err);
+            else {
+              module.size = file.length;
+              module.length = duration;
+              module.trackId = stream.id.toString();
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              resolve(this.model.findByIdAndUpdate(module._id, module).exec());
+            }
+          });
+        });
+      });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return this.model.findByIdAndUpdate(module._id, module).exec();
+    }
   }
 }
