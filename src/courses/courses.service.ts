@@ -74,15 +74,11 @@ export class CoursesService {
     return new Promise((resolve, reject) => {
       stream.on('error', reject);
       stream.on('finish', () => {
-        mp3Duration(file, (err, duration) => {
-          if (err) reject(err);
-          else {
-            module.size = file.length;
-            module.length = duration;
-            module.trackId = stream.id.toString();
-            resolve(new this.model(module).save());
-          }
-        });
+        module.size = file.length;
+        module.trackId = stream.id.toString();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        resolve(new this.model(module).save());
       });
     });
   }
@@ -160,17 +156,11 @@ export class CoursesService {
       return new Promise((resolve, reject) => {
         stream.on('error', reject);
         stream.on('finish', () => {
-          mp3Duration(file, (err, duration) => {
-            if (err) reject(err);
-            else {
-              module.size = file.length;
-              module.length = duration;
-              module.trackId = stream.id.toString();
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              resolve(this.model.findByIdAndUpdate(module._id, module).exec());
-            }
-          });
+          module.size = file.length;
+          module.trackId = stream.id.toString();
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          resolve(this.model.findByIdAndUpdate(module._id, module).exec());
         });
       });
     } else {
