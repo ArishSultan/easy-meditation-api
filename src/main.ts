@@ -1,59 +1,23 @@
+import { existsSync, readFileSync } from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: `-----BEGIN PRIVATE KEY-----
-MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDRwIRyYzDr+naR
-Vr8GI1PKP7upCvy8MUw6PrQCxhaLs5io7vxBjlbPgkUlDtLPCGCpb3mepCa1axgy
-ks/2vfMxTLwE0tSSxK+URo5o6EmVsPDSU22Qiqvz4KsktgLHi1Xh75aP5eTFubaY
-6Hpl3r/Uh5iBSrpRpq+MxhakzT+oA0K/gRgDFtZhUScW6VJ16G8DVHr0NeH1KHJ6
-8JGtknfRcXQvVSPBJyULIGRom57oO7FMicJVF58mmgY4lGyyEL/tINth8nsTSE7l
-f9VZpsxJ7/p/nOuGOBu5Zs7SsawOU84SJDvZkWaSuFX1aJyJprNeXOXWXZMyz3f8
-e98knw2BAgMBAAECggEBAJtPsQK+Hcht8gOWNuYFnJKCdKMr5o429pmeOk5ffOw+
-tMhKBXFJQ1BtxmM1QbVZH7H2QBjOtXbZ8NXpzaGHbx7PEd2EezCeAOCLCgH2Fh6I
-IRmr+tHvTHnNnwwU1aQJsTMV4+dzM92QsPsyEQeDU4m8SZlayvGQuiZDuxqWfA8b
-2yNsJfJ98se6r1WcaCBJedZoYNo9AXAtiTrNr09WqL5yGX+HeBg0MHVtwH4wXoQx
-Egp9i8FPQoJW8sgYAERSkZN+M10DCBFAkjt62FvTTr99te86wcI7AHy14G3aZQ1L
-v5UJj0IVv/s/9js9zL01D59AcOlZ3MQDrLv+yLL9EP0CgYEA9tbVsoafPAOtkxGw
-LdAgOz4em0mV5PPtcTs9U+4GBDF1en6bObbok+1f3/ipvacm9x/u6TjkmBJ4t43X
-xUahJLL/iZZhrYEfeuz3s7ABWlUpj5dvXlEJ7GJHekunXdL/YCzif4DiXLBxAvzs
-05eB+ExNbbBMRug3q0HYgfwUbjcCgYEA2YlTUPC7iynqlxgrKM++qeMx25SAKH0z
-7auDpVSzWMsrbZEW+XjqcmefXfbI/zs/oCyN5qMXcYct32iCskZXEikz2PdKnPud
-7dixuUTuCX5UPVU8+hpXIlk2/VulSCwELioVmEO0ENOLcA2MUBtyHIWIm5hlxG8u
-UFo0xDb7RgcCgYEApuDZeqe+8aD+8UXtGRvzHnpB0PRvzWkIJxxIuvxZvu39IYKE
-yQEavh+mSNJhV2GxWzOQnsYi7ZjXWikgLjQw75HAZzFu+hEoyj94u1eLopmezoAv
-/9DD57cN4eVR0oG6uze9LTxiTQ3QaZe7ONXePZLAah7dgrauJC8RA9f7rAMCgYEA
-vuR5DmAR008XIzv8M7YJ1D8gs1WfGOi1tux5e43WTCcNlvppNMZcxcQU33n+a6rs
-bHxskWWw3tkG8jNd7V84bSFm9BAdk6BhuCQd4TyRvhbziVbRSY/vwp6TWMUhRzIJ
-ARHBHXrb+qAIjm31IR7Uhh7P/+o986C0/aILB9xPp+UCgYAqCVHAn+7K0O3t4zJL
-nSbUCpTTgzxavW+0qrPhVC41VDFd9W4jQt0X00pe5IPUw6GH64MKV003FOAN49PI
-dC38RA9Ev7gKZyGAe8pOwRAvHhdk0W45pU54yYS/36jDnEByny73E197kZ/qZeiL
-yUHJ8kGiFoXLwxQk7tQaQvJ0Pg==
------END PRIVATE KEY-----`,
-    cert: `-----BEGIN CERTIFICATE-----
-MIIDYzCCAkugAwIBAgIUHMJSL4WZOF7FHRyRQjwy89mE2mAwDQYJKoZIhvcNAQEL
-BQAwQTELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMQswCQYDVQQHDAJVUzEYMBYG
-A1UECgwPRWFzeSBNZWRpdGF0aW9uMB4XDTIxMDUwODA2NDEwN1oXDTIyMDUwODA2
-NDEwN1owQTELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMQswCQYDVQQHDAJVUzEY
-MBYGA1UECgwPRWFzeSBNZWRpdGF0aW9uMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
-MIIBCgKCAQEA0cCEcmMw6/p2kVa/BiNTyj+7qQr8vDFMOj60AsYWi7OYqO78QY5W
-z4JFJQ7SzwhgqW95nqQmtWsYMpLP9r3zMUy8BNLUksSvlEaOaOhJlbDw0lNtkIqr
-8+CrJLYCx4tV4e+Wj+Xkxbm2mOh6Zd6/1IeYgUq6UaavjMYWpM0/qANCv4EYAxbW
-YVEnFulSdehvA1R69DXh9ShyevCRrZJ30XF0L1UjwSclCyBkaJue6DuxTInCVRef
-JpoGOJRsshC/7SDbYfJ7E0hO5X/VWabMSe/6f5zrhjgbuWbO0rGsDlPOEiQ72ZFm
-krhV9WiciaazXlzl1l2TMs93/HvfJJ8NgQIDAQABo1MwUTAdBgNVHQ4EFgQU/HG1
-s024qTRnXhmJYQqFS0JPKlEwHwYDVR0jBBgwFoAU/HG1s024qTRnXhmJYQqFS0JP
-KlEwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAdhKJv8z09BjN
-KouStVOG2y8EyYo/OcOupOKgzGwShaCsyUt1gujbYwjUPW+HSCum9h3UFKzCyIdu
-zi18iMaQmKQvAT3dEK1nrsutq75TASXAZLh+vS5vnID8EDYw7T2dhnHyeEFDHNPg
-0dG5wNiDiU7lz/Bx6BaYj3ZkATFM0F6tH2SNSML375vb2oeUaGtqZosItqhiEQ/8
-a3MDX2SnlX/Up3GVGSQ6j90ggx7wzklTod2uxfjMzGhu/5lVEXeEEAtNAT0UDa6W
-VphjG2RrKlsbvfUD11afGlMBWa5IUNk6+2z4PENCGJVZRlCozGd5ry0Xc0cN10Je
-CevvzS+kUA==
------END CERTIFICATE-----
-`,
-  };
+  const httpsOptions = {};
+
+  if (
+    existsSync(
+      '/etc/letsencrypt/live/dashboard.easymeditation.co/fullchain.pem',
+    )
+  ) {
+    httpsOptions['key'] = readFileSync(
+      '/etc/letsencrypt/live/dashboard.easymeditation.co/privkey.pem',
+    );
+    httpsOptions['cert'] = readFileSync(
+      '/etc/letsencrypt/live/dashboard.easymeditation.co/fullchain.pem',
+    );
+  }
+
   const app = await NestFactory.create(AppModule, { httpsOptions });
   app.enableCors();
 
