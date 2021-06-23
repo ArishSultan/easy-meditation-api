@@ -6,6 +6,9 @@ import { AuthModule } from './common/auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MongooseConfigService } from './common/db/mongdb.config';
 import { CoursesModule } from './courses/courses.module';
+import { AboutController } from './about/about.controller';
+import { AboutService } from './about/about.service';
+import { AboutModule } from './about/about.module';
 
 @Module({
   imports: [
@@ -15,8 +18,9 @@ import { CoursesModule } from './courses/courses.module';
     AuthModule,
     UsersModule,
     CoursesModule,
+    AboutModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AboutController],
+  providers: [AppService, AboutService],
 })
 export class AppModule {}
